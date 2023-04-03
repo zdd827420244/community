@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nowcoder.community.dao.DiscussPostMapper"> <!--表明这个配置文件，是为这个接口服务的-->
+    <sql id="selectFields">
+        id, user_id, title, content, type, status, create_time, comment_count, score
+    </sql>
+
+    <select id="selectDiscussPosts" resultType="DiscussPost"> <!--利用方法名指定对应关系   注意，返回类型是List<DiscussPost>,集合类型是java自带的，它能够认出来，所以我们返回类型只需要声明里面的类DiscussPost就行-->
+        select <include refid="selectFields"></include>
+        from discuss_post
+        where status !=2 
+        <if test="userId != 0"> <!--test属性里面写if的条件-->
+            and user_id = #{userId}
+        </if>
+        order by type desc,create_time desc  <!--desc倒序-->
+        limit #{offset},#{limit} <!--分页  用关键字limit，后面跟两个参数，起始行 每一页最大行数-->
+    </select>
+
+    <select id="selectDiscussPostRows" resultType="int"> <!--不声明是整数也可以，因为它能识别-->
+        select count(id)
+        from discuss_post
+        where status !=2
+        <if test="userId != 0">
+            and user_id = #{userId}
+        </if>
+
+    </select>
+
+
+</mapper>

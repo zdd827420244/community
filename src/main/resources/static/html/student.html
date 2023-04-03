@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>增加学生</title>
+</head>
+<body>
+<!-- 访问本html页面时，是放在static文件下，static不用敲，下级html要敲  因为是静态页面，就不是那个controller的路径alpha了   /html/student.html-->
+<!-- 表单 请求方式是post   action声明提交路径 -->
+    <form method="post" action="/community/alpha/student">
+        <p>  <!-- p是段落  -->
+            姓名：<input type="text" name="name">  <!-- 文本框 文本框里的数据提交到服务器之后，需要给它起个名字 -->
+        </p>
+        <p>
+            年龄：<input type="text" name="age">
+        </p>
+        <p>
+            <input type="submit" value="保存">  <!-- submit提交按钮 -->
+        </p>
+
+    </form>
+
+</body>
+</html>

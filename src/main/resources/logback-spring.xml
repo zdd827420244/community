@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--只要你取logback-spring这个名字，并且放到resources这个根目录下，springboot就会自动启用这个文件里的配置-->
+<configuration>
+    <contextName>community</contextName>  <!--项目应用名-->
+    <property name="LOG_PATH" value="C:/WK/data"/> <!--变量/属性-->
+    <property name="APPDIR" value="community"/> <!--这样日志文件会放到C:/WK/data/community下-->
+
+    <!-- error file -->  <!--配置什么样的日志要存放到error file里-->
+    <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APPDIR}/log_error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> <!--滚动策略  也就是建新文件的策略-->
+            <fileNamePattern>${LOG_PATH}/${APPDIR}/error/log-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern> <!--%d 日期   %i 序号-->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5MB</maxFileSize>  <!--最大文件大小-->
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>  <!--最长存30天-->
+        </rollingPolicy>
+        <append>true</append> <!--以追加形式存，不是覆盖-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"><!--日志输出格式-->
+            <pattern>%d %level [%thread] %logger{10} [%file:%line] %msg%n</pattern> <!-- %level 级别 %thread 哪个线程 %logger 日志所处类，是在哪个类打印的日志   %file哪个文件%line多少行  %msg具体消息  %n换行-->
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"> <!--过滤器，什么样的日志会被这个组件去处理-->
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>  <!--error级别的日志，如果匹配就接受，不匹配就拒绝-->
+        </filter>
+    </appender>
+
+    <!-- warn file -->
+    <appender name="FILE_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APPDIR}/log_warn.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APPDIR}/warn/log-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>warn</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- info file -->
+    <appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APPDIR}/log_info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APPDIR}/info/log-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- console --> <!--把日志打印到控制台-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>debug</level>
+        </filter>
+    </appender>
+
+    <logger name="com.nowcoder.community" level="debug"/>  <!--单独声明com.nowcoder.community包下日志级别为debug-->
+
+    <root level="info">  <!--整个项目所有包的根目录，默认级别是info 因为根目录包含所有jar包里面的类，用debug的话日志就太多了-->
+        <appender-ref ref="FILE_ERROR"/> <!--启用上面的那几个组件-->
+        <appender-ref ref="FILE_WARN"/>
+        <appender-ref ref="FILE_INFO"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

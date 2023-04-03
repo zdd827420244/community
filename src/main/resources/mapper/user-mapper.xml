@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nowcoder.community.dao.UserMapper">  <!--写UserMapper权限的名，这样才能确定这个xml配置文件是为哪个mapper服务的-->
+<!--  每次select都得写一堆字段，而且更改时也很麻烦，考虑能否将其复用  -->
+    <sql id="selectFields">
+        id, username, password, salt, email, type, status, activation_code, header_url, create_time
+    </sql>  <!--这样复用后，就可以用这个来替换那一堆字段-->
+    <sql id="insertFields">
+        username, password, salt, email, type, status, activation_code, header_url, create_time
+    </sql>   <!--id是自动生成的，所以字段中不要写id-->
+
+
+
+    <!--里面是各种各样的标签，每个标签要对应一个接口中的方法-->
+    <select id="selectById" resultType="User">  <!--这个id里面要写它所对应的方法的名,这样就知道这个sql是为哪个方法服务的 resultType声明返回类型，正常情况应该写权限名，但是之前的主配置文件application.properties中声明了实例类会放在那里，所以包名可以省略了-->
+        select <include refid="selectFields"></include>  <!--这样就完成复用了-->
+        from user
+        where id = #{id} <!--#{id}表明要引用这个方法的参数，参数名是id-->
+    </select>
+    <select id="selectByName" resultType="User">
+        select id, username, password, salt, email, type, status, activation_code, header_url, create_time
+        from user
+        where username = #{username}
+    </select>
+    <select id="selectByEmail" resultType="User">
+        select id, username, password, salt, email, type, status, activation_code, header_url, create_time
+        from user
+        where email = #{email}
+    </select>
+    <insert id="insertUser" parameterType="User" keyProperty="id">  <!--这个方法传入的参数是一个复杂的参数，是Bean，需要声明这是个什么类型的参数,用parameterType  如果是简单的，也就是java自带的，int啊String啊，就不用声明-->
+<!--keyProperty这个声明与表的id主键字段对应的类的属性名是什么，因为增加后mysql底层自动生成id，mybatis得到这个id，会回填到这个User bean里-->
+        insert into user (<include refid="insertFields"></include>)
+        values(#{username}, #{password}, #{salt}, #{email}, #{type}, #{status}, #{activationCode}, #{headerUrl}, #{createTime})
+        <!--传入的属性来自User参数，引入时里面写User属性名-->
+    </insert>
+
+<!--  insert update返回的都是固定类型，int型，所以不用声明返回类型  select需要声明。  而insert由于传入的参数是bean，比较复杂，需要声明参数类型  update只改一个字段传入参数简单，不用声明-->
+    <update id="updateStatus">
+        update user set status = #{status} where id = #{id}
+    </update>
+    <update id="updateHeader">
+        update user set header_url = #{headerUrl} where id = #{id}
+    </update>
+    <update id="updatePassword">
+        update user set password = #{password} where id = #{id}
+    </update>
+
+
+</mapper>

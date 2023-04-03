@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<!--注意，这个html不是静态的，是thymeleaf模板，我们需要声明，让服务器知道这是一个模板，不是普通html -->
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">  <!--声明当前网页是一个模板，模板语法是来源于thymeleaf官网  -->
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher</title>
+</head>
+<body>
+  <p th:text="${name}"></p>    <!--th是thymeleaf的缩写  意思是，p的文本应该是双引号里面的变量,这个变量要用表达式来写  这个name就要用model中取得的name的值来替代-->
+<!-- 在模板引擎渲染页面时就会获取变量，然后放在p里-->
+  <p th:text="${age}"></p>
+
+</body>
+</html>
