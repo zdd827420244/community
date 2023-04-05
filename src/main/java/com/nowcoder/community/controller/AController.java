@@ -1,8 +1,11 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.service.AService;
+import com.nowcoder.community.util.CommunityUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
@@ -174,12 +177,52 @@ public class AController {
         emp.put("salary",7000.00);
         emps.add(emp);
 
-
-
         return emps;
         //DS调用时一看你加了@ResponseBody注解，返回的是Map<String,Object>类型，它自动会将map转换成一个JSON字符串，发送给浏览器
         //请求响应的类型是application/json
     }
+
+    //cookie
+    @RequestMapping(path = "/cookie/set",method =RequestMethod.GET)
+    @ResponseBody
+    public String setCookie(HttpServletResponse response){
+        //创建cookie
+        Cookie cookie=new Cookie("code", CommunityUtil.generateUUID());//必须传入参数，没有无参构造器  参数必须都是字符串  每个cookie只能存一组key value
+        //设置生效范围  比如服务器有些服务其实不需要cookie，所以如果浏览器不管访问什么服务都发cookie过来的话，效率会低  所以要声明cookie在哪些路径有效
+        cookie.setPath("/community/alpha");//表示这个cookie只有在这个路径和它的子路径下才有效
+        //设置生存时间  单位是秒 浏览器得到cookie默认存到内存里，一关就没了  但是一旦给cookie声明存活时间，它就会给cookie存到硬盘里，长期有效，直到超过这个生存时间后才无效
+        cookie.setMaxAge(60*10);
+        //发送cookie  cookie是放到response的头的
+        response.addCookie(cookie);
+
+        return "set cookie";
+    }
+    @RequestMapping(path = "/cookie/get",method =RequestMethod.GET)
+    @ResponseBody
+    public String getCookie(@CookieValue("code")String code){ //如果用request.getcookies能得到所有cookie对象，得到的是一个cookie数组，具体想要哪个cookie需要遍历
+        //  想要众多cookie中的某一个key对应的，就要用@CookieValue注解,里面是key
+        System.out.println(code);
+        return "get cookie";
+    }
+
+    //session
+    @RequestMapping(path = "/session/set",method = RequestMethod.GET)
+    @ResponseBody
+    public String setSession(HttpSession session){// session不用我们手动创建  spring mvc自动创建session，并注入进来  所以只需要声明一下就行
+        //session是保存在服务端的， 所以可以存任何数据  cookie来回传，所以只能存少量字符串数据，并且客户端也只能识别字符串
+        session.setAttribute("id",1);//也是key value;
+        session.setAttribute("name","Test");
+        return "set seesion";
+    }
+    @RequestMapping(path = "/session/get",method = RequestMethod.GET)
+    @ResponseBody
+    public String getSession(HttpSession session){
+        System.out.println(session.getAttribute("id"));
+        System.out.println(session.getAttribute("name"));
+        return "get session";
+
+    }
+
 
 
 

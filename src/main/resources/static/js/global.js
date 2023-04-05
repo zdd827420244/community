@@ -1,3 +1,4 @@
+var CONTEXT_PATH="/community"; <!--声明一个全局变量  global.js在全局页面都引用了，所以这个变量我们也可以在所有页面中访问-->
 window.alert = function(message) {
 	if(!$(".alert-box").length) {
 		$("body").append(
