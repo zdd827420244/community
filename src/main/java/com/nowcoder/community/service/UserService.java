@@ -159,5 +159,9 @@ public class UserService implements CommunityConstant {//处理激活逻辑时�
         return loginTicketMapper.selectByTicket(ticket);
     }
 
+    public int updateHeader(int userId,String headerUrl){
+        return userMapper.updateHeader(userId,headerUrl);
+    }
+
 
 }
