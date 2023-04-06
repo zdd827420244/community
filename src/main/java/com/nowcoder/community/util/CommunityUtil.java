@@ -1,8 +1,11 @@
 package com.nowcoder.community.util;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class CommunityUtil {
@@ -22,4 +25,39 @@ public class CommunityUtil {
         }
         return DigestUtils.md5DigestAsHex(key.getBytes());  //spring自带的一个工具 加密成一个16进制的字符串返回，但它要求传入的参数是byte数组
     }
+
+    public static String getJSONString(int code, String msg, Map<String, Object> map) {//编号、提示信息、业务数据，
+        //返回的JSON数据往往要包含几部分，本方法就是把这几部分整合到一起，封装成一个JSON对象，把这个对象转换成字符串，返回一个JSON串
+        JSONObject json=new JSONObject();//JSON对象
+        json.put("code",code);
+        json.put("msg",msg);
+        //map业务数据需要打散装入
+        if(map!=null) {
+            for(String key:map.keySet()) {
+                json.put(key,map.get(key));
+            }
+        }
+        return json.toJSONString();
+    }
+    public static String getJSONString(int code, String msg) {//编号一定有  重载，便于调用
+        return getJSONString(code,msg,null);
+    }
+    public static String getJSONString(int code) {
+        return getJSONString(code,null,null);
+    }
+    public static void main(String[] args) {
+        Map<String,Object> map=new HashMap<>();
+        map.put("name","zhangsan");
+        map.put("age",25);
+        System.out.println(getJSONString(0,"ok",map));
+    }
+
+
+
+
+
+
+
+
+
 }

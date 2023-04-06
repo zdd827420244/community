@@ -71,7 +71,7 @@
 							<a class="nav-link" href="#">最热</a>
 						</li>
 					</ul>
-					<button type="button" class="btn btn-primary btn-sm position-absolute rt-0" data-toggle="modal" data-target="#publishModal">我要发布</button>
+					<button type="button" class="btn btn-primary btn-sm position-absolute rt-0" data-toggle="modal" data-target="#publishModal" th:if="${loginUser!=null}">我要发布</button>
 				</div>
 				<!-- 弹出框 -->
 				<div class="modal fade" id="publishModal" tabindex="-1" role="dialog" aria-labelledby="publishModalLabel" aria-hidden="true">
@@ -97,7 +97,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-								<button type="button" class="btn btn-primary" id="publishBtn">发布</button>
+								<button type="button" class="btn btn-primary" id="publishBtn">发布</button> <!--这个按钮点击的操作实际上已经实现了，在后面引入的js文件中-->
 							</div>
 						</div>
 					</div>
@@ -124,7 +124,7 @@
 						</a>
 						<div class="media-body">
 							<h6 class="mt-0 mb-3">
-								<a href="#" th:utext="${map.post.title}"></a>  <!--href链接，能链到帖子的详情页面，目前还没有，先用#，#代表当前页面 text和utext区别，utext能识别出转移字符，并显示出它该有的样子-->
+								<a th:href="@{|/discuss/detail/${map.post.id}|}" th:utext="${map.post.title}"></a>  <!--href链接，能链到帖子的详情页面，目前还没有，先用#，#代表当前页面 text和utext区别，utext能识别出转移字符，并显示出它该有的样子 @{}可以帮我们自动带上项目路径-->
 								<span class="badge badge-secondary bg-primary" th:if="${map.post.type==1}">置顶</span>
 								<span class="badge badge-secondary bg-danger" th:if="${map.post.status==1}">精华</span>
 							</h6>
@@ -133,30 +133,30 @@
 								<ul class="d-inline float-right">
 									<li class="d-inline ml-2">赞 11</li>
 									<li class="d-inline ml-2">|</li>
-									<li class="d-inline ml-2">回帖 7</li>
+									<li class="d-inline ml-2">回帖 <span th:text="${map.post.commentCount}">7</span></li>  <!--只在7外面套一个标签，因为只把7改成动态值-->
 								</ul>
 							</div>
 						</div>						
 					</li>
 				</ul>
 				<!-- 分页 -->
-				<nav class="mt-5" th:if="${page.rows>0}">
+				<nav class="mt-5" th:if="${page.rows>0}" th:fragment="pagination">
 					<ul class="pagination justify-content-center">
 						<li class="page-item">
-							<a class="page-link" th:href="@{${page.path}(current=1,limit=10)}">首页</a>  <!--要加上参数，可以用()也可以?,用括号会自动变成?的样子，比如这里会变成 /index?current=1&limit=10-->
+							<a class="page-link" th:href="@{${page.path}(current=1)}">首页</a>  <!--要加上参数，可以用()也可以?,用括号会自动变成?的样子，比如${page.path}(current=1,limit=10)这里会变成 /index?current=1&limit=10-->
 						</li>
 						<li th:class="|page-item ${page.current==1 ? 'disabled':''}|"> <!--disabled实现不可点    |  |声明中间有静态/固定值，然后里面再加${}就能实现静态和动态拼接-->
-							<a class="page-link" th:href="@{${page.path}(current=${page.current}-1,limit=10)}">上一页</a>
+							<a class="page-link" th:href="@{${page.path}(current=${page.current}-1)}">上一页</a>
 						</li>
 						<li th:class="|page-item ${i==page.current ? 'active':''}|" th:each="i:${#numbers.sequence(page.from,page.to)}"> <!--正常th:each应该传进去一个集合 这里我们是想要第几页到第几页的循环 thymeleaf也支持。有一个numbers工具,sequence()方法会返回一个连续数组组成的数组,要指定起始和终止的数字-->
-							<a class="page-link" th:href="@{${page.path}(current=${i},limit=10)}" th:text="${i}"></a>                                            <!--这里${}已经表明里面都是变量了，所以page.from和.to不用再加${}声明变量了-->
+							<a class="page-link" th:href="@{${page.path}(current=${i})}" th:text="${i}"></a>                                            <!--这里${}已经表明里面都是变量了，所以page.from和.to不用再加${}声明变量了-->
 						</li>
 
 						<li th:class="|page-item ${page.current==page.total?'disabled':''}|">
-							<a class="page-link" th:href="@{${page.path}(current=${page.current}+1,limit=10)}">下一页</a>
+							<a class="page-link" th:href="@{${page.path}(current=${page.current}+1)}">下一页</a>
 						</li>
 						<li class="page-item">
-							<a class="page-link" th:href="@{${page.path}(current=${page.total},limit=10)}">末页</a>
+							<a class="page-link" th:href="@{${page.path}(current=${page.total})}">末页</a>
 						</li>
 					</ul>
 				</nav>

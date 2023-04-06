@@ -16,8 +16,11 @@ public interface DiscussPostMapper {
     int selectDiscussPostRows(@Param("userId") int userId);  //查询帖子数量   在写任何方法时，可以在参数前加入一个注解,意思是给这个参数起一个别名
     //如果在SQL里需要用到动态参数/条件，而恰巧这个方法有且只有一个参数，那么这个参数就必须取别名（否则会报错）  动态SQL是用<if>标签来拼的，所以动态参数就是在<if>里使用了这个参数
 
+    int insertDiscussPost(DiscussPost discussPost);
 
+    DiscussPost selectDiscussPostById(int id);
 
+    int updateCommentCount(int id,int commentCount);
 
 
 }

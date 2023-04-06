@@ -6,6 +6,9 @@
     <sql id="selectFields">
         id, user_id, title, content, type, status, create_time, comment_count, score
     </sql>
+    <sql id="insertFields">
+        user_id, title, content, type, status, create_time, comment_count, score
+    </sql>
 
     <select id="selectDiscussPosts" resultType="DiscussPost"> <!--利用方法名指定对应关系   注意，返回类型是List<DiscussPost>,集合类型是java自带的，它能够认出来，所以我们返回类型只需要声明里面的类DiscussPost就行-->
         select <include refid="selectFields"></include>
@@ -25,8 +28,21 @@
         <if test="userId != 0">
             and user_id = #{userId}
         </if>
-
     </select>
+    <insert id="insertDiscussPost" parameterType="DiscussPost">
+        insert into discuss_post (<include refid="insertFields"></include>)
+        values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
+    </insert>
+    
+    <select id="selectDiscussPostById" resultType="DiscussPost">
+        select <include refid="selectFields"></include>
+        from discuss_post
+        where id=#{id}
+    </select>
+
+    <update id="updateCommentCount">
+        update discuss_post set comment_count = #{commentCount} where id = #{id}
+    </update>
 
 
 </mapper>

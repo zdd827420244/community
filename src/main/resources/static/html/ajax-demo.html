@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AJAX</title>
+</head>
+<body>
+  <p>
+      <input type="button" value="发送" onclick="send();"><!--点击事件，里面调用send方法，实现这个方法需要引入jQuery-->
+  </p>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script> <!--通过官网引入jQuery-->
+  <script>
+      function send() {
+        $.post(
+                "/community/alpha/ajax",//要访问的路径
+                {"name":"张三","age":23},  //要向服务器提交的数据，这里要写一个js对象，js对象实际上就是json格式
+                function (data){ //回调函数  没有名字  当服务器给浏览器发出响应后，浏览器得到响应后，会调这个方法，并且会把服务器返回的数据传给这个方法，data就是服务器返回的数据，是字符串
+                  console.log(typeof(data));
+                  console.log(data);
+                  //data是个字符串，要转换成js对象
+                  data=$.parseJSON(data);//$.parseJSON输入字符串，返回js对象
+                  console.log(typeof(data));
+                  console.log(data.code);
+                  console.log(data.msg);
+                }
+        );  //用jQuery发送业务请求很简单 $.get $.post，发送get /post请求   $.ajax是万能方法，可以配置任何参数，getpost都行
+      }
+
+  </script>
+</body>
+</html>
