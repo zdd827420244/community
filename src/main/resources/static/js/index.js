@@ -19,7 +19,7 @@ function publish() {
 			$("#hintModal").modal("show");       //显示提示框
 			setTimeout(function(){       //2秒后提示框隐藏
 				$("#hintModal").modal("hide");
-				//刷新页面
+				//刷新/重载页面
 				if(data.code==0) {
 					window.location.reload();
 				}
