@@ -89,7 +89,7 @@ public class AService {
         transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
-        return transactionTemplate.execute(new TransactionCallback<Object>() {
+        return transactionTemplate.execute(new TransactionCallback<Object>() { //方法内部要传入一个接口实例，我们可以做匿名实现
             @Override
             public Object doInTransaction(TransactionStatus status) {
                 User user =new User();
@@ -112,7 +112,6 @@ public class AService {
                 return "ok";
             }
         });
-
 
     }
 
