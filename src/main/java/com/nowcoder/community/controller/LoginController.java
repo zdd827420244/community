@@ -4,6 +4,8 @@ import com.google.code.kaptcha.Producer;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
+import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.RedisKeyUtil;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -26,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class LoginController implements CommunityConstant { //为了让激活返回的值我们能识别
@@ -37,6 +41,9 @@ public class LoginController implements CommunityConstant { //为了让激活返
 
     @Autowired
     private Producer kaptchaProducer;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
@@ -88,13 +95,25 @@ public class LoginController implements CommunityConstant { //为了让激活返
     }
 
     @RequestMapping(path = "/kaptcha",method = RequestMethod.GET)
-    public void getKaptcha(HttpServletResponse response, HttpSession session) {//向浏览器输出的是一个图片，不是字符串也不是html网页  我们需要自己用response对象手动向浏览器输出  生成验证码后，服务端要记住，不能存到浏览器端  并且这次请求要生成，下次登录请求要访问，所以跨请求了  用session
+    public void getKaptcha(HttpServletResponse response/*, HttpSession session*/) {//向浏览器输出的是一个图片，不是字符串也不是html网页  我们需要自己用response对象手动向浏览器输出  生成验证码后，服务端要记住，不能存到浏览器端  并且这次请求要生成，下次登录请求要访问，所以跨请求了  用session
         //生成验证码
         String text=kaptchaProducer.createText();//生成字符串
         BufferedImage image = kaptchaProducer.createImage(text);
 
         //验证码存入session
-        session.setAttribute("kaptcha",text);
+        //session.setAttribute("kaptcha",text);
+
+        //验证码的归属
+        String kaptchaOwner= CommunityUtil.generateUUID();
+        Cookie cookie=new Cookie("kaptchaOwner",kaptchaOwner);
+        cookie.setMaxAge(60);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
+        //将验证码存入reids
+        String redisKey= RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+        redisTemplate.opsForValue().set(redisKey,text,60, TimeUnit.SECONDS);//超过60秒就失效了
+
+
 
         //图片输出给浏览器
         response.setContentType("image/png"); //声明给浏览器返回什么类型的数据
@@ -105,14 +124,20 @@ public class LoginController implements CommunityConstant { //为了让激活返
         } catch (IOException e) {
             logger.error("响应验证码失败："+e.getMessage());
         }
+        //原来把验证码存到了session中，现在我们要重构，存到redis中  不同浏览器，对应验证码是不同的，但我们目前不能用userid来识别，因为目前还是未登录状态，所以我们就通过cookie给浏览器发放一个随机码owner，通过这个归属来判断该浏览器对应的验证码是哪一个
     }
 
     @RequestMapping(path = "/login",method = RequestMethod.POST) //请求方式和上面那个不一样，所以path可以重复
     public String login(String username,String password, String code, boolean rememberme,Model model,
-                        HttpSession session,HttpServletResponse response) { //如果不是普通的参数，而是实体，比如User，springmvc会自动把user装配到model，我们就可以在页面直接得到user里的数据
+                        /*HttpSession session,*/HttpServletResponse response,@CookieValue("kaptchaOwner") String kaptchaOwner) { //如果不是普通的参数，而是实体，比如User，springmvc会自动把user装配到model，我们就可以在页面直接得到user里的数据
         //但是如果是普通的参数，基本类型，int String boolean等，springmvc不会把这些参数装进model，那怎么在页面中获取呢：法1，手动装入model里 法2，这些值都是存在于在request对象中的，而我们执行到页面时，这个request实际上还没有结束，所以依然能用request访问
         //检查验证码
-        String kaptcha=(String)session.getAttribute("kaptcha");  //返回Object  需要强制转换
+        //String kaptcha=(String)session.getAttribute("kaptcha");  //返回Object  需要强制转换
+        String kaptcha=null;
+        if(StringUtils.isNotBlank(kaptchaOwner)) {
+            String redisKey=RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+            kaptcha=(String)redisTemplate.opsForValue().get(redisKey);
+        }
         if(StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) { //equalsIgnoreCase和equals相等的逻辑是一样的，不过它忽略大小写
             model.addAttribute("codeMsg", "验证码不正确");
             return "/site/login";

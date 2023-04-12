@@ -1,5 +1,6 @@
 package com.nowcoder.community;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,6 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication //这个注解所标识的类，表明这个类是个配置文件 一般程序入口才会用这个注解，一般配置类不会用。 正式运行肯定要运行该类，一运行就是以它为配置类开始运行
 public class CommunityApplication {
 
+	@PostConstruct
+	public void init() {
+		// 解决netty启动冲突问题
+		// see Netty4Utils.setAvailableProcessors()
+		System.setProperty("es.set.netty.runtime.available.processors", "false");
+	}
 	public static void main(String[] args) {
 		SpringApplication.run(CommunityApplication.class, args);
 		//运行时，底层帮我们自动启动了tomcat应用服务器  spring boot里jar包内嵌了一个tomcat，服务器启动了，就能用浏览器访问了

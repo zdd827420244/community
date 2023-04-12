@@ -4,6 +4,7 @@ package com.nowcoder.community.config;
 import com.nowcoder.community.controller.interceptor.AInterceptor;
 import com.nowcoder.community.controller.interceptor.LoginRequiredInterceptor;
 import com.nowcoder.community.controller.interceptor.LoginTicketInterceptor;
+import com.nowcoder.community.controller.interceptor.MessageInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -22,6 +23,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private LoginRequiredInterceptor loginRequiredInterceptor;
 
+    @Autowired
+    private MessageInterceptor messageInterceptor;
     //实现接口，接口里也有许多default方法，按需实现
     //注册拦截器
     @Override
@@ -36,7 +39,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(loginRequiredInterceptor)
                 .excludePathPatterns("/**/*.css","/**/*.js","/**/*.png","/**/*.jpg","/**/*.jpeg");  //让他不要处理静态资源，其他动态资源全处理，只不过我们人为筛选了一下有loginRequired注解的
-
+        registry.addInterceptor(messageInterceptor)
+                .excludePathPatterns("/**/*.css","/**/*.js","/**/*.png","/**/*.jpg","/**/*.jpeg");
     }
 
 }

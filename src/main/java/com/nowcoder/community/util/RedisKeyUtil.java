@@ -27,7 +27,7 @@ public class RedisKeyUtil { //工具方法，用来生成redis的key
     }
 
     // 某个用户关注的实体
-    // followee:userId:entityType -> zset(entityId,now)
+    // followee:userId:entityType -> zset(entityId,now) //以当前时间的整数形式作为分数
     public static String getFolloweeKey(int userId, int entityType) {
         return PREFIX_FOLLOWEE + SPLIT + userId + SPLIT + entityType;
     }

@@ -13,7 +13,7 @@ function publish() {
 		CONTEXT_PATH+ "/discuss/add",
 		{"title":title,"content":content},
 		function (data) {
-			data=$.parseJSON(data);
+			data=$.parseJSON(data);  //转换成JS对象
 			//在提示框中显示返回的消息
 			$("#hintBody").text(data.msg);
 			$("#hintModal").modal("show");       //显示提示框

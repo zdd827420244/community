@@ -1,17 +1,43 @@
 package com.nowcoder.community.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
 import java.util.Date;
 
+@Document(indexName = "discusspost") //数据库中的数据要和elasticsearch中在存储上要一一对应，所以要进行注解配置  索引名，也就是ES中的表名
 public class DiscussPost {
+
+    @Id//主键
     private int id;
+
+    @Field(type = FieldType.Integer) //普通属性
     private int userId;
+
+    // 互联网校招  建立索引实际上就是提炼关键词，然后用关键词关联这句话  保存时应该尽可能分成多个词条与之匹配  搜索时尽量聪明点，拆分少点，满足需求
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")  //存储时解析器  搜索时解析器
     private String title;
+
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String content;
+
+    @Field(type = FieldType.Integer)
     private int type;
+
+    @Field(type = FieldType.Integer)
     private int status;
+
+    @Field(type = FieldType.Date)
     private Date createTime;
+
+    @Field(type = FieldType.Integer)
     private int commentCount;
+
+    @Field(type = FieldType.Double)
     private double score;
+
 
     public int getId() {
         return id;

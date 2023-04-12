@@ -29,6 +29,9 @@ public class ServiceLogAspect {
     public void before(JoinPoint joinPoint) {//通过连接点参数获得哪个类哪个方法
         // 用户[1.2.3.4],在[xxx],访问了[com.nowcoder.community.service.xxx()]. 用户ip可以通过request获取
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();//利用RequestContextHolder工具类
+        if(attributes==null) {
+            return;
+        }
         HttpServletRequest request = attributes.getRequest();
         String ip = request.getRemoteHost();
         String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());

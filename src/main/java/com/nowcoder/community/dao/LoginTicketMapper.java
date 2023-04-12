@@ -4,6 +4,7 @@ import com.nowcoder.community.entity.LoginTicket;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@Deprecated //注解声明该组件不推荐使用，别用了
 public interface LoginTicketMapper {
     //实现方法，之前都是在mapper目录下新建一个xml文件写SQL
     //其实还有一种方式，就是Mapper接口当中写注解，通过注解声明方法对应的SQ
