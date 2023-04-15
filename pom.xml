@@ -94,6 +94,7 @@
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>elasticsearch-rest-client</artifactId>
 		</dependency>
+
 	</dependencies>
 
 	<build>

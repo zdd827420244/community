@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+
 public class WebMvcConfig implements WebMvcConfigurer {
     //之前配置类一般都是为了引入/声明一个第三方的Bean  但拦截器的逻辑不一样，它首先要求实现一个接口
 
@@ -20,8 +21,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private LoginTicketInterceptor loginTicketInterceptor;
 
-    @Autowired
-    private LoginRequiredInterceptor loginRequiredInterceptor;
+ //   @Autowired
+  //  private LoginRequiredInterceptor loginRequiredInterceptor;
 
     @Autowired
     private MessageInterceptor messageInterceptor;
@@ -37,8 +38,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginTicketInterceptor)
                 .excludePathPatterns("/**/*.css","/**/*.js","/**/*.png","/**/*.jpg","/**/*.jpeg");
 
-        registry.addInterceptor(loginRequiredInterceptor)
-                .excludePathPatterns("/**/*.css","/**/*.js","/**/*.png","/**/*.jpg","/**/*.jpeg");  //让他不要处理静态资源，其他动态资源全处理，只不过我们人为筛选了一下有loginRequired注解的
+   //     registry.addInterceptor(loginRequiredInterceptor)
+     //           .excludePathPatterns("/**/*.css","/**/*.js","/**/*.png","/**/*.jpg","/**/*.jpeg");  //让他不要处理静态资源，其他动态资源全处理，只不过我们人为筛选了一下有loginRequired注解的
         registry.addInterceptor(messageInterceptor)
                 .excludePathPatterns("/**/*.css","/**/*.js","/**/*.png","/**/*.jpg","/**/*.jpeg");
     }

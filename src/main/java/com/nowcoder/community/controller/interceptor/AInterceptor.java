@@ -13,6 +13,7 @@ public class AInterceptor implements HandlerInterceptor {  //拦截器要实现H
 
     private static final Logger logger= LoggerFactory.getLogger(AInterceptor.class);//以当前类作为logger名字
     //在拦截请求的时候，在controller处理请求代码之前执行  相当于在controller之前先处理一下请求，所以参数有request response
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
