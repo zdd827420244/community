@@ -1,64 +1,14 @@
 package com.nowcoder.community;
 
 
+import co.elastic.clients.elasticsearch.core.knn_search.KnnSearchQuery;
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.dao.elasticsearch.DiscussPostRepository;
 import com.nowcoder.community.entity.DiscussPost;
-/*import org.elasticsearch.*;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;*/
-import org.elasticsearch.client.RequestOptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.devtools.restart.server.HttpRestartServerHandler;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.client.erhlc.RestHighLevelClientFactoryBean;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.data.elasticsearch.core.query.*;
-import com.nowcoder.community.dao.DiscussPostMapper;
-import com.nowcoder.community.dao.elasticsearch.DiscussPostRepository;
-import com.nowcoder.community.entity.DiscussPost;
-/*import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.SearchResultMapper;
-import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
-import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;*/
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
@@ -74,6 +24,8 @@ public class ElasticsearchTests {
 
     @Autowired
     private DiscussPostRepository discussRepository;
+
+
 
   /*  @Qualifier("client")
     @Autowired

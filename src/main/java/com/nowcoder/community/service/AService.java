@@ -8,8 +8,12 @@ import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -25,6 +29,8 @@ import java.util.Date;
 @Scope("prototype")//如果不想单例，想每次getBean都新建一个实例  加个注解@Scope，也就是作用范围，整个容器有一个还是有多个  默认参数singleton，单例
 //多例 prototype，这时每次访问Bean，都会生成一个新的实例
 public class AService {
+
+    private static final Logger logger=LoggerFactory.getLogger(AService.class);
 
     @Autowired
     private ADao aDao;
@@ -113,6 +119,17 @@ public class AService {
             }
         });
 
+    }
+
+
+    @Async// 注解让该方法在多线程环境下,被异步的调用.
+    public void execute1() {
+        logger.debug("execute1");
+    }
+
+ //   @Scheduled(initialDelay = 10000, fixedRate = 1000)  // 注解让该方法在多线程环境下被定时的调用，只要有程序在跑，它自动就会启动，不用进行调用
+    public void execute2() {
+        logger.debug("execute2");
     }
 
 

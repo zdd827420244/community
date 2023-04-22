@@ -1,9 +1,13 @@
 package com.nowcoder.community.service;
 
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.util.SensitiveFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
@@ -12,13 +16,24 @@ import java.util.List;
 @Service
 public class DiscussPostService {
 
+    private static final Logger logger = LoggerFactory.getLogger(DiscussPostService.class);
     @Autowired
     private SensitiveFilter sensitiveFilter;
 
     @Autowired
     private DiscussPostMapper discussPostMapper;
 
+    @Value("${caffeine.posts.max-size}")
+    private int maxSize;
+
+    @Value("${caffeine.posts.expire-seconds}")
+    private int expireSeconds;
+
+
+
+
     public List<DiscussPost> findDiscussPosts(int userId, int offset, int limit) {
+
         return discussPostMapper.selectDiscussPosts(userId,offset,limit);
     }
 

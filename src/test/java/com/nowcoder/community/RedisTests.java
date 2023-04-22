@@ -138,6 +138,7 @@ public class RedisTests {
     // 统计20万个重复数据的独立总数.
     @Test
     public void testHyperLogLog() {
+        //得先往redis里面存数据
         String redisKey = "test:hll:01";
 
         for (int i = 1; i <= 100000; i++) {
@@ -172,7 +173,7 @@ public class RedisTests {
         }
 
         String unionKey = "test:hll:union";
-        redisTemplate.opsForHyperLogLog().union(unionKey, redisKey2, redisKey3, redisKey4);
+        redisTemplate.opsForHyperLogLog().union(unionKey, redisKey2, redisKey3, redisKey4); //合并后产生一个新的HyperLogLog数据，存放到redis中。unionKey是存放的key
 
         long size = redisTemplate.opsForHyperLogLog().size(unionKey);
         System.out.println(size);
@@ -184,26 +185,26 @@ public class RedisTests {
         String redisKey = "test:bm:01";
 
         // 记录
-        redisTemplate.opsForValue().setBit(redisKey, 1, true);
-        redisTemplate.opsForValue().setBit(redisKey, 4, true);
+        redisTemplate.opsForValue().setBit(redisKey, 1, true);//因为本身还是字符串，所以用opsForValue   setBit按位存  因为是按位存，所以要指定索引，第几位是多少
+        redisTemplate.opsForValue().setBit(redisKey, 4, true);//false不用存，默认就是false
         redisTemplate.opsForValue().setBit(redisKey, 7, true);
 
         // 查询
-        System.out.println(redisTemplate.opsForValue().getBit(redisKey, 0));
+        System.out.println(redisTemplate.opsForValue().getBit(redisKey, 0));//getBit按位取
         System.out.println(redisTemplate.opsForValue().getBit(redisKey, 1));
         System.out.println(redisTemplate.opsForValue().getBit(redisKey, 2));
 
         // 统计
-        Object obj = redisTemplate.execute(new RedisCallback() {
+        Object obj = redisTemplate.execute(new RedisCallback() {  //统计不能用opsForValue()，得用底层的connection
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                return connection.bitCount(redisKey.getBytes());
+                return connection.bitCount(redisKey.getBytes()); //传入redisKey.getBytes() 二进制数据，byte数组
             }
         });
 
         System.out.println(obj);
     }
-
+    //因为是boolean值，所以可以做与或运算
     // 统计3组数据的布尔值, 并对这3组数据做OR运算.
     @Test
     public void testBitMapOperation() {
@@ -226,7 +227,7 @@ public class RedisTests {
         Object obj = redisTemplate.execute(new RedisCallback() {
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                connection.bitOp(RedisStringCommands.BitOperation.OR,
+                connection.bitOp(RedisStringCommands.BitOperation.OR,  //bitOp 位运算
                         redisKey.getBytes(), redisKey2.getBytes(), redisKey3.getBytes(), redisKey4.getBytes());
                 return connection.bitCount(redisKey.getBytes());
             }
